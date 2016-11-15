@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Question</title>
+</head>
+<body>
+    <h1>Question: {{question.name}}</h1>
+    {{question.intro}}
+    </br></br>
+<div id="content">
+	Your response: {{user_answer}}
+</div>
+</br></br>
+    <a href={{url_for('list_questions')}}>Go back to question list</a>
+</body>
+</html>

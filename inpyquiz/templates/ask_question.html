@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Question</title>
+</head>
+<body>
+    <h1>Question: {{question.name}}</h1>
+    {{question.intro}}
+    </br></br>
+<div id="content">
+<form method="post" action="{{ url_for('respond_question', question_id=question.id)}}">
+<label for="user_answer">Please enter your answer:</label>
+<input type="text" name="user_answer" /><br />
+<input type="submit" />
+</form>
+</div>
+</br></br>
+    <a href={{url_for('list_questions')}}>Go back to question list</a>
+</body>
+</html>
