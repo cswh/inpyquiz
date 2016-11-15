@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>List of questions</title>
+</head>
+<body>
+    <h1>List of questions</h1>
+    {% for q in questions %}
+        <a href={{url_for('ask_question', question_id=q.id)}}>{{q.name}}</a>
+	</br>
+    {% endfor %}
+</body>
+</html>
