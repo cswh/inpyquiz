@@ -7,7 +7,9 @@ activate_this = '/path/to/env/bin/activate_this.py'
 with open(activate_this) as file_:
         exec(file_.read(), dict(__file__=activate_this))
 """
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
+from flask_wtf import FlaskForm
+from wtforms import StringField
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -60,28 +62,54 @@ def list_questions():
     return render_template('list_questions.html', questions=questions)
 
 
-@app.route('/question/<int:question_id>/ask')
+class AnswerForm(FlaskForm):
+    answer = StringField('Answer')
+
+
+@app.route('/question/<int:question_id>/ask', methods=['GET', 'POST'])
 def ask_question(question_id):
     question = session.query(Question).get(question_id)
-    return render_template('ask_question.html', question=question)
+    form = AnswerForm()
+    if form.validate_on_submit():
+        user_answer = form.answer.data
+        return redirect(url_for('feedback',
+                                question_id=question_id,
+                                user_answer=user_answer))
+    return render_template('ask_question.html',
+                           question=question,
+                           form=form)
 
 
-@app.route('/question/<int:question_id>/respond')
-def respond_question(question_id, methods=['GET', 'POST']):
-    user_answer = request.form['user_answer']
-    return redirect(url_for('feedback_question',
+@app.route('/question/<int:question_id>/askagain', methods=['GET', 'POST'])
+def askagain_question(question_id):
+    user_answer = request.args.get('user_answer')
+    question = session.query(Question).get(question_id)
+    form = AnswerForm()
+    if form.validate_on_submit():
+        user_answer = form.answer.data
+        return redirect(url_for('feedback',
+                                question_id=question_id,
+                                user_answer=user_answer))
+    return render_template('askagain_question.html',
+                           question=question,
+                           form=form,
+                           user_answer=user_answer)
+
+
+@app.route('/question/<int:question_id>/feedback', methods=['GET', 'POST'])
+def feedback(question_id):
+    user_answer = request.args.get('user_answer')
+    question = session.query(Question).get(question_id)
+    if user_answer == question.correct:
+        return render_template('feedback.html',
+                               question=question,
+                               user_answer=user_answer)
+    return redirect(url_for('askagain_question',
                             question_id=question_id,
                             user_answer=user_answer))
 
 
-@app.route('/question/<int:question_id>/feedback')
-def feedback_question(question_id, user_answer):
-    question = session.query(Question).get(question_id)
-    return render_template('feedback_question.html',
-                           question=question,
-                           user_answer=user_answer)
-
-
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+    app.secret_key = 'NOTTHATSECRET'
+    app.run(host='0.0.0.0', port=8000)

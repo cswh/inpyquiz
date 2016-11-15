@@ -5,13 +5,17 @@
 </head>
 <body>
     <h1>Question: {{ question.name }}</h1>
+    That was not correct. Try again.
+    </br></br>
     {{ question.intro }}
     </br></br>
     <form method="post" action="">
         {{ form.answer }}
         {{ form.csrf_token }}
     </form>
-    </b></br>
+    </br>
+    Your previous answer was {{user_answer}}.
+    </br></br>
     <a href={{ url_for('list_questions') }}>Go back to question list</a>
 </body>
 </html>

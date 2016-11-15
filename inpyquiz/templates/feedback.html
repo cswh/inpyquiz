@@ -5,12 +5,12 @@
 </head>
 <body>
     <h1>Question: {{question.name}}</h1>
+    Correct!
+    </br></br>
     {{question.intro}}
     </br></br>
-<div id="content">
-	Your response: {{user_answer}}
-</div>
-</br></br>
+    The answer is: {{question.correct}}.
+    </br></br>
     <a href={{url_for('list_questions')}}>Go back to question list</a>
 </body>
 </html>
